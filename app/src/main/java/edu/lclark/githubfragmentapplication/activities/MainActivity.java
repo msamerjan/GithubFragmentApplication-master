@@ -15,7 +15,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import edu.lclark.githubfragmentapplication.R;
 import edu.lclark.githubfragmentapplication.fragments.FollowerFragment;
-import edu.lclark.githubfragmentapplication.fragments.LoginFragment;
 import edu.lclark.githubfragmentapplication.fragments.MainActivityFragment;
 import edu.lclark.githubfragmentapplication.models.GithubFollower;
 
@@ -82,8 +81,4 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
 
     }
 
-    public void tryLogin(View view){
-        LoginFragment fragment=(LoginFragment) getSupportFragmentManager().findFragmentById(R.id.username_entry);
-        fragment.tryLogin(view);
-    }
 }

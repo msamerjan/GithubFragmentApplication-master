@@ -6,6 +6,8 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,18 +17,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import edu.lclark.githubfragmentapplication.models.GithubFollower;
+import edu.lclark.githubfragmentapplication.models.GithubSubscription;
 
 /**
  * Created by maiaphoebedylansamerjan on 3/3/16.
  */
-public class LoginAsyncTask extends AsyncTask<String, Integer, Boolean> {
+public class LoginAsyncTask extends AsyncTask<String, Integer, GithubFollower> {
 
 
     public static final String TAG = LoginAsyncTask.class.getSimpleName();
     private final LoginListener mLoginListener;
 
     public interface LoginListener {
-        void ;
+        void onCompleteNetworkTask(GithubSubscription user);
     }
 
     public LoginAsyncTask(LoginListener listener) {
@@ -40,14 +43,16 @@ public class LoginAsyncTask extends AsyncTask<String, Integer, Boolean> {
     }
 
     @Override
-    protected Boolean doInBackground(String... params) {
+    protected GithubFollower doInBackground(String... params) {
 
         StringBuilder responseBuilder = new StringBuilder();
+        JSONObject jsonObject=null;
         if (params.length == 0) {
             return null;
         }
 
         String userId = params[0];
+        GithubFollower user=null;
 
         try {
             URL url = new URL("https://api.github.com/users/" + userId);
@@ -69,7 +74,7 @@ public class LoginAsyncTask extends AsyncTask<String, Integer, Boolean> {
                 }
             }
 
-
+            user= new Gson().fromJson(responseBuilder.toString(),GithubFollower.class);
 
             if (isCancelled()) {
                 return null;
@@ -78,13 +83,19 @@ public class LoginAsyncTask extends AsyncTask<String, Integer, Boolean> {
             Log.e(TAG, e.getLocalizedMessage());
         }
 
-        return true;
+        return null;
+    }
+    @Override
+    protected void onCancelled() {
+        super.onCancelled();
+        Log.d(TAG, " LoginAsyncTask has been cancelled");
     }
 
 
     @Override
-    protected void onPostExecute(Boolean result) {
-        super.onPostExecute(result);
-        login(result);
+    protected void onPostExecute(GithubFollower user) {
+        super.onPostExecute(user);
+
+            mLoginListener.onResultFound(user);
     }
 }
